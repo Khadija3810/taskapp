@@ -5,20 +5,27 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const taskRoute = require("./routes/task.routes");
 const userRoute = require("./routes/user.routes");
+const path = require("path");
+const app = express();
+app.use(express.static(path.join(__dirname, "public")));
 
 // const port = 5000;
 const port = process.env.PORT || 3000;
-const app = express();
 const uri = process.env.MONGO_URI 
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json()); // Parse JSON requests
+
+
 
 // Routes
 app.use("/tasks", taskRoute);
 app.use("/users", userRoute);
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 mongoose
   .connect(uri)
   .then(() => {
